@@ -30,7 +30,7 @@ const ptr_to_uuid_t ptr_to_uuid(void *p) { return (ptr_to_uuid_t)p; }
 //
 // connect to XPC service
 //
-xpc_connection_t XpcConnect(char *service, void *ctx) {
+xpc_connection_t XpcConnect(char *service, uintptr_t ctx) {
     dispatch_queue_t queue = dispatch_queue_create(service, 0);
     xpc_connection_t conn = xpc_connection_create_mach_service(service, queue, XPC_CONNECTION_MACH_SERVICE_PRIVILEGED);
 
@@ -61,16 +61,16 @@ void XpcSendMessage(xpc_connection_t conn, xpc_object_t message, bool release, b
     }
 }
 
-void XpcArrayApply(void *v, xpc_object_t arr) {
+void XpcArrayApply(uintptr_t v, xpc_object_t arr) {
   xpc_array_apply(arr, ^bool(size_t index, xpc_object_t value) {
-    arraySet(v, index, value);
+    arraySet((void *)v, index, value);
     return true;
   });
 }
 
-void XpcDictApply(void *v, xpc_object_t dict) {
+void XpcDictApply(uintptr_t v, xpc_object_t dict) {
   xpc_dictionary_apply(dict, ^bool(const char *key, xpc_object_t value) {
-    dictSet(v, (char *)key, value);
+    dictSet((void *)v, (char *)key, value);
     return true;
   });
 }
